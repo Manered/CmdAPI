@@ -6,6 +6,9 @@ import org.bukkit.command.CommandMap;
 
 import java.lang.reflect.Field;
 
+/**
+ * Registry class for registering custom commands using the Bukkit CommandMap.
+ */
 public class CommandBuilderRegistry {
     private static CommandMap commandMap;
 
@@ -19,6 +22,11 @@ public class CommandBuilderRegistry {
         }
     }
 
+    /**
+     * Registers a custom command with the Bukkit CommandMap.
+     *
+     * @param command The command to register.
+     */
     public static void registerCommand(Command command) {
         commandMap.register(command.getName(), command);
     }
