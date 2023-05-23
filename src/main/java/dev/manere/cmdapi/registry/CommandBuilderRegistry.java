@@ -31,8 +31,4 @@ public class CommandBuilderRegistry {
         commandMap.register(command.getName(), command);
         command.setLabel(command.getName()); // Set the label to the command name
     }
-
-    public static void unregisterCommand(Command command) {
-        command.unregister(commandMap);
-    }
 }
