@@ -1,10 +1,14 @@
 package dev.manere.cmdapi.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 /**
@@ -16,14 +20,17 @@ public class CommandBuilder {
     private String permission = "";
     private String[] aliases = new String[0];
     private CommandExecutor executor;
+    private final Plugin plugin;
 
     /**
-     * Constructs a CommandBuilder with the specified name.
+     * Constructs a CommandBuilder with the specified name and plugin.
      *
-     * @param name The name of the command.
+     * @param name   The name of the command.
+     * @param plugin The plugin instance.
      */
-    public CommandBuilder(String name) {
+    public CommandBuilder(String name, Plugin plugin) {
         this.name = name;
+        this.plugin = plugin;
     }
 
     /**
@@ -71,11 +78,9 @@ public class CommandBuilder {
     }
 
     /**
-     * Builds and returns an instance of the Bukkit {@link Command} class with the configured properties.
-     *
-     * @return An instance of the Command class.
+     * Builds and registers the command with the Bukkit server.
      */
-    public Command build() {
+    public void register() {
         Command command = new Command(name) {
             @Override
             public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
@@ -88,6 +93,19 @@ public class CommandBuilder {
         command.setDescription(description);
         command.setPermission(permission);
         command.setAliases(Arrays.asList(aliases));
-        return command;
+
+        // Register the command with the Bukkit server
+        registerCommand(command);
+    }
+
+    private void registerCommand(Command command) {
+        try {
+            Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
+            commandMapField.setAccessible(true);
+            SimpleCommandMap commandMap = (SimpleCommandMap) commandMapField.get(Bukkit.getServer());
+            commandMap.register(plugin.getDescription().getName(), command);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }
