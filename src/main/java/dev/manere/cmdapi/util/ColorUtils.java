@@ -1,14 +1,15 @@
-package dev.manere.cmdapi.utils;
+package dev.manere.cmdapi.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * The ColorUtils class provides utility methods for color-related operations.
- */
 public class ColorUtils {
+    private ColorUtils() {
+        // Private constructor to prevent instantiation
+    }
+
     /**
-     * Translates color codes in a string to the appropriate format for display.
+     * Translates the color codes in a string to the appropriate format for display.
      *
      * @param message the message string containing color codes
      * @return the translated message string
