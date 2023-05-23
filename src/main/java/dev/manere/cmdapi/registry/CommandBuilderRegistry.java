@@ -29,5 +29,6 @@ public class CommandBuilderRegistry {
      */
     public static void registerCommand(Command command) {
         commandMap.register(command.getName(), command);
+        command.setLabel(command.getName()); // Set the label to the command name
     }
 }
