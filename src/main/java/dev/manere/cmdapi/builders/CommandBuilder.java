@@ -1,13 +1,16 @@
 package dev.manere.cmdapi.builders;
 
-import org.bukkit.command.*;
+import dev.manere.cmdapi.util.ColorUtils;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import dev.manere.cmdapi.util.ColorUtils;
 
 /**
  * A builder class for creating Bukkit commands.
@@ -140,26 +143,28 @@ public class CommandBuilder {
         pluginCommand.setUsage(usage);
         pluginCommand.setAliases(aliases);
         pluginCommand.setPermissionMessage(permissionMessage);
-        pluginCommand.setExecutor((sender, command, label, args) -> {
-            if (commandExecutor != null) {
-                commandExecutor.accept(sender, args);
-            }
-            return true;
-        });
 
-        pluginCommand.setTabCompleter((sender, command, alias, args) -> {
-            if (!tabCompletions.isEmpty()) {
+        if (commandExecutor != null) {
+            pluginCommand.setExecutor((sender, command, label, args) -> {
+                commandExecutor.accept(sender, args);
+                return true;
+            });
+        }
+
+        if (!tabCompletions.isEmpty()) {
+            pluginCommand.setTabCompleter((sender, command, alias, args) -> {
                 for (TabCompletion tabCompletion : tabCompletions) {
                     if (args.length - 1 == tabCompletion.argumentIndex) {
                         return tabCompletion.tabCompleter.onTabComplete(sender, command, alias, args);
                     }
                 }
-            }
-            return null;
-        });
+                return null;
+            });
+        }
 
         return pluginCommand;
     }
+
 
     private static class TabCompletion {
         private final int argumentIndex;
